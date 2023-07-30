@@ -1,0 +1,33 @@
+{
+  "scripts": {
+    "fmt-lua": "stylua --indent-type Spaces --column-width 120 --line-endings Unix --indent-width 2 --quote-style AutoPreferDouble -g '*.lua' -v ./{controller,device,src}",
+    "fmt-md": "prettier --prose-wrap always --write ./{controller,device}/www/**/*.md",
+    "fmt": "npm run fmt-lua && npm run fmt-md",
+    "init": "mkdir -p out && python -m venv .venv && . .venv/bin/activate && python -m pip install pip setuptools wheel && env LDFLAGS=\"-L$(brew --prefix openssl)/lib\" CFLAGS=\"-I$(brew --prefix openssl)/include\" SWIG_FEATURES=\"-cpperraswarn -includeall -I$(brew --prefix openssl)/include\" pip install M2Crypto lxml && rm -rf out/driverpackager && git clone git@github.com:snap-one/drivers-driverpackager.git out/driverpackager",
+    "controller-docs": "rm -rf ./images && cp -r controller/www/documentation/images . && npm run controller-docs-html && npm run controller-docs-pdf",
+    "controller-docs-html": "cd controller/www/documentation; generate-md --layout github --input index.md --output .",
+    "controller-docs-pdf": "electron-pdf --marginsType 0 --input \"$(pwd)/controller/www/documentation/index.html\" --output \"out/myQ Controller Documentation.pdf\"",
+    "device-docs": "npm run device-docs-html && npm run device-docs-pdf",
+    "device-docs-html": "cd device/www/documentation; generate-md --layout github --input index.md --output .",
+    "device-docs-pdf": "electron-pdf --marginsType 0 --input \"$(pwd)/device/www/documentation/index.html\" --output \"out/myQ Device Documentation.pdf\"",
+    "docs": "npm run controller-docs && npm run device-docs",
+    "update-controller-driver-version": "xmlstarlet edit --inplace --omit-decl --update '/devicedata/version' --value \"`date +'%Y%m%d'`\" ./controller/driver.xml",
+    "update-controller-driver-modified-date": "xmlstarlet edit --inplace --omit-decl --update '/devicedata/modified' --value \"`date +'%m/%d/%Y %I:%M %p'`\" ./controller/driver.xml",
+    "update-device-driver-version": "xmlstarlet edit --inplace --omit-decl --update '/devicedata/version' --value \"`date +'%Y%m%d'`\" ./device/driver.xml",
+    "update-device-driver-modified-date": "xmlstarlet edit --inplace --omit-decl --update '/devicedata/modified' --value \"`date +'%m/%d/%Y %I:%M %p'`\" ./device/driver.xml",
+    "update-driver-versions": "npm run update-controller-driver-version && npm run update-device-driver-version",
+    "update-driver-modified-dates": "npm run update-controller-driver-modified-date && npm run update-device-driver-modified-date",
+    "package-controller": "mkdir -p out && cd controller && ../.venv/bin/python3 ../out/driverpackager/dp3/driverpackager.py . ../out controller.c4zproj",
+    "package-device": "mkdir -p out && cd device && ../.venv/bin/python3 ../out/driverpackager/dp3/driverpackager.py . ../out device.c4zproj",
+    "package": "npm run package-controller && npm run package-device",
+    "zip": "cd out && zip $(basename \"$(realpath \"$(pwd)/../\")\").zip *.{c4z,pdf}",
+    "build": "npm run fmt && npm run update-driver-versions && npm run update-driver-modified-dates && npm run docs && npm run package && npm run zip",
+    "clean": "rm -rfv out node_modules .venv"
+  },
+  "dependencies": {
+    "@johnnymorganz/stylua-bin": "^0.18.1",
+    "electron-pdf": "^25.0.0",
+    "markdown-styles": "^3.2.0",
+    "prettier": "^3.0.2"
+  }
+}

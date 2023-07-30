@@ -1,0 +1,370 @@
+<devicedata>
+  <name>myQ Device</name>
+  <version>20230822</version>
+  <manufacturer>Chamberlain</manufacturer>
+  <model>myQ</model>
+  <creator>Black Ops Drivers</creator>
+  <small image_source="c4z">icons/device_sm.png</small>
+  <large image_source="c4z">icons/device_lg.png</large>
+  <control>lua_gen</control>
+  <driver>DriverWorks</driver>
+  <created>07/30/2023 01:24 PM</created>
+  <modified>08/22/2023 11:35 AM</modified>
+  <minimum_os_version>3.3.0</minimum_os_version>
+  <composer_categories>
+    <category>Motorization</category>
+  </composer_categories>
+  <conditionals>
+    <conditional>
+      <id>1</id>
+      <name>State</name>
+      <type>LIST</type>
+      <condition_statement>State</condition_statement>
+      <description>NAME State is LOGIC STRING</description>
+      <items>
+        <item>Open</item>
+        <item>Closed</item>
+        <item>Partially Open</item>
+        <item>Unknown</item>
+      </items>
+    </conditional>
+  </conditionals>
+  <events>
+    <event>
+      <id>1</id>
+      <name>Opened</name>
+      <description>When the NAME is Opened</description>
+    </event>
+    <event>
+      <id>2</id>
+      <name>Closed</name>
+      <description>When the NAME is Closed</description>
+    </event>
+    <event>
+      <id>3</id>
+      <name>Partial</name>
+      <description>When the NAME is Opening or Closing</description>
+    </event>
+    <event>
+      <id>4</id>
+      <name>Unknown</name>
+      <description>When the NAME is in an Unknown State</description>
+    </event>
+  </events>
+  <config>
+    <script file="driver.lua" encryption="2" jit="1"/>
+    <documentation file="www/documentation/index.html"/>
+    <properties>
+      <property>
+        <name>Driver</name>
+        <type>LABEL</type>
+        <default>Driver Settings</default>
+      </property>
+      <property>
+        <name>Driver Version</name>
+        <default/>
+        <type>STRING</type>
+        <readonly>true</readonly>
+      </property>
+      <property>
+        <name>Log Level</name>
+        <type>LIST</type>
+        <default>3 - Info</default>
+        <items>
+          <item>0 - Fatal</item>
+          <item>1 - Error</item>
+          <item>2 - Warning</item>
+          <item>3 - Info</item>
+          <item>4 - Debug</item>
+          <item>5 - Trace</item>
+          <item>6 - Ultra</item>
+        </items>
+      </property>
+      <property>
+        <name>Log Mode</name>
+        <type>LIST</type>
+        <default>Off</default>
+        <items>
+          <item>Off</item>
+          <item>Print</item>
+          <item>Log</item>
+          <item>Print and Log</item>
+        </items>
+      </property>
+      <property>
+        <name>Device Settings</name>
+        <type>LABEL</type>
+        <default>Device Settings</default>
+      </property>
+      <property>
+        <name>Device Name</name>
+        <default/>
+        <type>STRING</type>
+        <readonly>true</readonly>
+      </property>
+      <property>
+        <name>Device Type</name>
+        <default/>
+        <type>STRING</type>
+        <readonly>true</readonly>
+      </property>
+      <property>
+        <name>Device Status</name>
+        <default>OFFLINE</default>
+        <type>STRING</type>
+        <readonly>true</readonly>
+      </property>
+      <property>
+        <name>Auto-Rename</name>
+        <type>LIST</type>
+        <items>
+          <item>Yes</item>
+          <item>No</item>
+        </items>
+        <default>Yes</default>
+        <readonly>false</readonly>
+      </property>
+      <property>
+        <name>Opened LED Color</name>
+        <type>COLOR_SELECTOR</type>
+        <default>0,200,0</default>
+        <readonly>false</readonly>
+        <tooltip>Color of attached keypad buttons on 'Opened' state.</tooltip>
+      </property>
+      <property>
+        <name>Closed LED Color</name>
+        <type>COLOR_SELECTOR</type>
+        <default>200,0,0</default>
+        <readonly>false</readonly>
+        <tooltip>Color of attached keypad buttons on 'Closed' state.</tooltip>
+      </property>
+      <property>
+        <name>Partial Open LED Color</name>
+        <type>COLOR_SELECTOR</type>
+        <default>200,200,0</default>
+        <readonly>false</readonly>
+        <tooltip>Color of attached keypad buttons on 'Partially Opened' state.</tooltip>
+      </property>
+      <property>
+        <name>Inactive LED Color</name>
+        <type>COLOR_SELECTOR</type>
+        <default>0,0,200</default>
+        <readonly>false</readonly>
+        <tooltip>Color of attached Open/Close keypad buttons when not active (i.e. 'Open' button link when closed and vice-versa).</tooltip>
+      </property>
+      <property>
+        <name>Unknown LED Color</name>
+        <type>COLOR_SELECTOR</type>
+        <default>0,0,0</default>
+        <readonly>false</readonly>
+        <tooltip>Color of attached keypad buttons on 'Unknown' state.</tooltip>
+      </property>
+    </properties>
+    <commands>
+      <command>
+        <name>Open</name>
+        <description>Open NAME</description>
+      </command>
+      <command>
+        <name>Close</name>
+        <description>Close NAME</description>
+      </command>
+    </commands>
+    <actions>
+      <action>
+        <name>Open</name>
+        <command>Open</command>
+      </action>
+      <action>
+        <name>Close</name>
+        <command>Close</command>
+      </action>
+      <action>
+        <name>Reset LED Colors to Project Defaults</name>
+        <command>ResetLEDColors</command>
+      </action>
+    </actions>
+  </config>
+  <capabilities>
+    <navigator_display_option proxybindingid="5001">
+      <display_icons>
+        <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_closed/experience_70.png</Icon>
+        <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_closed/experience_90.png</Icon>
+        <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_closed/experience_300.png</Icon>
+        <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_closed/experience_512.png</Icon>
+        <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_closed/experience_1024.png</Icon>
+        <state id="garage_open">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_open/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_open/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_open/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_open/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_open/experience_1024.png</Icon>
+        </state>
+        <state id="garage_open_pending">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_open_pending/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_open_pending/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_open_pending/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_open_pending/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_open_pending/experience_1024.png</Icon>
+        </state>
+        <state id="garage_closed">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_closed/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_closed/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_closed/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_closed/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_closed/experience_1024.png</Icon>
+        </state>
+        <state id="garage_close_pending">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_close_pending/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_close_pending/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_close_pending/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_close_pending/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_close_pending/experience_1024.png</Icon>
+        </state>
+        <state id="garage_partial">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_partial/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_partial/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_partial/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_partial/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_partial/experience_1024.png</Icon>
+        </state>
+        <state id="garage_unknown">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_unknown/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_unknown/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_unknown/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_unknown/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_unknown/experience_1024.png</Icon>
+        </state>
+        <state id="gate_open">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_open/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_open/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_open/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_open/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_open/experience_1024.png</Icon>
+        </state>
+        <state id="gate_open_pending">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_open_pending/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_open_pending/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_open_pending/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_open_pending/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_open_pending/experience_1024.png</Icon>
+        </state>
+        <state id="gate_closed">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_closed/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_closed/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_closed/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_closed/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_closed/experience_1024.png</Icon>
+        </state>
+        <state id="gate_close_pending">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_close_pending/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_close_pending/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_close_pending/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_close_pending/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_close_pending/experience_1024.png</Icon>
+        </state>
+        <state id="gate_partial">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_partial/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_partial/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_partial/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_partial/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_partial/experience_1024.png</Icon>
+        </state>
+        <state id="gate_unknown">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_unknown/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_unknown/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_unknown/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_unknown/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_unknown/experience_1024.png</Icon>
+        </state>
+      </display_icons>
+    </navigator_display_option>
+  </capabilities>
+  <proxies>
+    <proxy proxybindingid="5001" name="myQ Device" image_source="c4z" large_image="icons/device_lg.png" small_image="icons/device_sm.png">uibutton</proxy>
+  </proxies>
+  <connections>
+    <connection>
+      <id>5001</id>
+      <facing>6</facing>
+      <connectionname>UIBUTTON</connectionname>
+      <type>2</type>
+      <consumer>False</consumer>
+      <audiosource>False</audiosource>
+      <videosource>False</videosource>
+      <linelevel>False</linelevel>
+      <classes>
+        <class>
+          <classname>UIBUTTON</classname>
+        </class>
+      </classes>
+    </connection>
+    <connection>
+      <id>5002</id>
+      <facing>6</facing>
+      <connectionname>myQ Device</connectionname>
+      <type>2</type>
+      <consumer>True</consumer>
+      <audiosource>False</audiosource>
+      <videosource>False</videosource>
+      <linelevel>False</linelevel>
+      <classes>
+        <class>
+          <classname>MYQ_DEVICE</classname>
+        </class>
+      </classes>
+      <hidden>False</hidden>
+    </connection>
+    <connection>
+      <id>500</id>
+      <facing>6</facing>
+      <connectionname>Toggle</connectionname>
+      <type>1</type>
+      <consumer>False</consumer>
+      <audiosource>False</audiosource>
+      <videosource>False</videosource>
+      <linelevel>False</linelevel>
+      <classes>
+        <class>
+          <classname>BUTTON_LINK</classname>
+          <autobind>False</autobind>
+        </class>
+      </classes>
+      <hidden>False</hidden>
+    </connection>
+    <connection>
+      <id>501</id>
+      <facing>6</facing>
+      <connectionname>Open</connectionname>
+      <type>1</type>
+      <consumer>False</consumer>
+      <audiosource>False</audiosource>
+      <videosource>False</videosource>
+      <linelevel>False</linelevel>
+      <classes>
+        <class>
+          <classname>BUTTON_LINK</classname>
+          <autobind>False</autobind>
+        </class>
+      </classes>
+      <hidden>False</hidden>
+    </connection>
+    <connection>
+      <id>502</id>
+      <facing>6</facing>
+      <connectionname>Close</connectionname>
+      <type>1</type>
+      <consumer>False</consumer>
+      <audiosource>False</audiosource>
+      <videosource>False</videosource>
+      <linelevel>False</linelevel>
+      <classes>
+        <class>
+          <classname>BUTTON_LINK</classname>
+          <autobind>False</autobind>
+        </class>
+      </classes>
+      <hidden>False</hidden>
+    </connection>
+  </connections>
+</devicedata>

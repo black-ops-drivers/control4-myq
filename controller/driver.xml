@@ -1,0 +1,117 @@
+<devicedata>
+  <name>myQ Controller</name>
+  <version>20230822</version>
+  <manufacturer>Chamberlain</manufacturer>
+  <model>myQ Controller</model>
+  <creator>Black Ops Drivers</creator>
+  <small image_source="c4z">icons/device_sm.png</small>
+  <large image_source="c4z">icons/device_lg.png</large>
+  <control>lua_gen</control>
+  <controlmethod>ip</controlmethod>
+  <driver>DriverWorks</driver>
+  <created>07/30/2023 01:24 PM</created>
+  <modified>08/22/2023 11:35 AM</modified>
+  <combo>true</combo>
+  <minimum_os_version>3.3.0</minimum_os_version>
+  <composer_categories>
+    <category>Motorization</category>
+  </composer_categories>
+  <config>
+    <script file="driver.lua" encryption="2" jit="1"/>
+    <documentation file="www/documentation/index.html"/>
+    <properties>
+      <property>
+        <name>Cloud</name>
+        <type>LABEL</type>
+        <default>Cloud Settings</default>
+      </property>
+      <property>
+        <name>Automatic Updates</name>
+        <description>Automatic updates are strongly encouraged as this driver uses an unofficial API and is subject to change.</description>
+        <type>LIST</type>
+        <items>
+          <item>Off</item>
+          <item>On</item>
+        </items>
+        <default>On</default>
+      </property>
+      <property>
+        <name>Update Channel</name>
+        <type>LIST</type>
+        <default>Production</default>
+        <items>
+          <item>Production</item>
+          <item>Prerelease</item>
+        </items>
+      </property>
+      <property>
+        <name>Driver</name>
+        <type>LABEL</type>
+        <default>Driver Settings</default>
+      </property>
+      <property>
+        <name>Driver Status</name>
+        <type>STRING</type>
+        <default/>
+        <readonly>true</readonly>
+      </property>
+      <property>
+        <name>Driver Version</name>
+        <type>STRING</type>
+        <default/>
+        <readonly>true</readonly>
+      </property>
+      <property>
+        <name>Log Level</name>
+        <type>LIST</type>
+        <default>3 - Info</default>
+        <items>
+          <item>0 - Fatal</item>
+          <item>1 - Error</item>
+          <item>2 - Warning</item>
+          <item>3 - Info</item>
+          <item>4 - Debug</item>
+          <item>5 - Trace</item>
+          <item>6 - Ultra</item>
+        </items>
+      </property>
+      <property>
+        <name>Log Mode</name>
+        <type>LIST</type>
+        <default>Off</default>
+        <items>
+          <item>Off</item>
+          <item>Print</item>
+          <item>Log</item>
+          <item>Print and Log</item>
+        </items>
+      </property>
+      <property>
+        <name>myQ Settings</name>
+        <type>LABEL</type>
+        <default>myQ Settings</default>
+      </property>
+      <property>
+        <name>Email</name>
+        <type>STRING</type>
+        <default/>
+      </property>
+      <property>
+        <name>Password</name>
+        <type>STRING</type>
+        <default/>
+        <password>true</password>
+      </property>
+    </properties>
+    <actions>
+      <action>
+        <name>Update Drivers</name>
+        <command>UpdateDrivers</command>
+      </action>
+      <action>
+        <name>Refresh Devices</name>
+        <command>RefreshDevices</command>
+      </action>
+    </actions>
+  </config>
+</devicedata>
