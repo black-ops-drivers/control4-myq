@@ -272,20 +272,21 @@ function API:_getOauthCredentials(forceNewToken)
       local d = deferred.new()
       C4:url()
         :SetOptions({ cookies_enable = true })
-        :OnDone(function(_, responses)
-          responses = IsList(responses) and responses or {}
-          local responseCode = tointeger(Select(responses, #responses, "code")) or 0
-          local tHeaders = Select(responses, #responses, "headers") or {}
-
-          if
-            responseCode == 302
-            and not IsEmpty(Select(tHeaders, "Set-Cookie"))
-            and not IsEmpty(Select(tHeaders, "Location"))
-          then
-            d:resolve(tHeaders.Location)
-          else
-            d:reject("authentication failed; incorrect email and password")
+        :OnDone(function(_, loginResponses)
+          loginResponses = IsList(loginResponses) and loginResponses or {}
+          for _, loginResponse in pairs(loginResponses) do
+            local responseCode = tointeger(Select(loginResponse, "code")) or 0
+            local tHeaders = Select(loginResponse, "headers") or {}
+            if
+              responseCode == 302
+              and not IsEmpty(Select(tHeaders, "Set-Cookie"))
+              and not IsEmpty(Select(tHeaders, "Location"))
+            then
+              d:resolve(tHeaders.Location)
+            end
           end
+          log:ultra("authentication failure responses: %s", loginResponses)
+          d:reject("authentication failed; incorrect email and password")
         end)
         :Post(
           OAUTH_BASE_URI .. endpoint,
