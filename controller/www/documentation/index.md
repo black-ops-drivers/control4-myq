@@ -133,6 +133,20 @@ https://github.com/black-ops-drivers/control4-myq/issues/new
 [//]: # "### Removed"
 [//]: # "- Removed"
 
+## v20230829 - 2023-08-29
+
+### Added
+
+- Added `Still Open` event for the device, configured by the
+  `Still Open Time (s)` property.
+
+## v20230823 - 2023-08-23
+
+### Fixed
+
+- Fixed login issue where the wrong response was used to determine if the
+  credentials were valid.
+
 ## v20230822 - 2023-08-22
 
 ### Added
