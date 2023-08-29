@@ -205,6 +205,35 @@ function RFP.REQUEST_BUTTON_COLORS(idBinding, strCommand, tParams, args)
   end
 end
 
+local function fireEvent(event)
+  log:trace("fireEvent(%s)", event)
+  log:info("Firing event '%s'", event)
+  C4:FireEvent(event)
+end
+
+local STILL_OPEN_TIMER_ID = "StillOpen"
+
+local function startStillOpenTimer()
+  log:trace("startStillOpenTimer()")
+  -- Do not restart the timer if it is already running
+  if not IsEmpty(Timer[STILL_OPEN_TIMER_ID]) then
+    return
+  end
+
+  local stillOpenTime = InRange(tointeger(Properties["Still Open Time (s)"]) or 0, 0, 3600)
+  if stillOpenTime > 0 then
+    log:debug("Starting Still Open Timer: " .. stillOpenTime .. " second(s)")
+    SetTimer(STILL_OPEN_TIMER_ID, ONE_SECOND * stillOpenTime, function()
+      fireEvent("Still Open")
+    end)
+  end
+end
+
+local function stopStillOpenTimer()
+  log:trace("stopStillOpenTimer()")
+  CancelTimer(STILL_OPEN_TIMER_ID)
+end
+
 local function updateState(newState)
   log:trace("updateState(%s)", newState)
   if IsEmpty(newState) or newState == STATE then
@@ -214,7 +243,7 @@ local function updateState(newState)
   log:debug("State changed from %s -> %s", STATE, newState)
 
   -- Do not fire an event when STATE was uninitialized (ie. during driver initialization)
-  local fireEvent = STATE ~= nil
+  local shouldFireEvent = STATE ~= nil
   STATE = newState or STATE
 
   C4:SetVariable("STATE", STATE)
@@ -226,7 +255,7 @@ local function updateState(newState)
   end
 
   -- Only record if we are also firing an event as otherwise there is no material change
-  if fireEvent then
+  if shouldFireEvent then
     C4:RecordHistory(
       "Info",
       STATE,
@@ -238,22 +267,25 @@ local function updateState(newState)
 
   local buttonColors = getButtonColors()
   if STATE == "open" then
+    startStillOpenTimer()
     setButtonColor(TOGGLE_LINK_ID, buttonColors.OPENED, buttonColors.CLOSED, true)
     setButtonColor(CLOSE_LINK_ID, buttonColors.CLOSED, buttonColors.INACTIVE, false)
     setButtonColor(OPEN_LINK_ID, buttonColors.OPENED, buttonColors.INACTIVE, true)
     SendToProxy(PROXY_BINDING, "ICON_CHANGED", { icon = iconset .. "_open", icon_description = "Open" })
-    if fireEvent then
-      C4:FireEvent("Opened")
+    if shouldFireEvent then
+      fireEvent("Opened")
     end
   elseif STATE == "closed" then
+    stopStillOpenTimer()
     setButtonColor(TOGGLE_LINK_ID, buttonColors.OPENED, buttonColors.CLOSED, false)
     setButtonColor(OPEN_LINK_ID, buttonColors.OPENED, buttonColors.INACTIVE, false)
     setButtonColor(CLOSE_LINK_ID, buttonColors.CLOSED, buttonColors.INACTIVE, true)
     SendToProxy(PROXY_BINDING, "ICON_CHANGED", { icon = iconset .. "_closed", icon_description = "Closed" })
-    if fireEvent then
-      C4:FireEvent("Closed")
+    if shouldFireEvent then
+      fireEvent("Closed")
     end
   elseif STATE == "opening" or STATE == "closing" then
+    startStillOpenTimer()
     setButtonColor(TOGGLE_LINK_ID, buttonColors.PARTIAL, buttonColors.PARTIAL, true)
     setButtonColor(OPEN_LINK_ID, buttonColors.PARTIAL, buttonColors.PARTIAL, false)
     setButtonColor(CLOSE_LINK_ID, buttonColors.PARTIAL, buttonColors.PARTIAL, false)
@@ -262,16 +294,17 @@ local function updateState(newState)
       "ICON_CHANGED",
       { icon = iconset .. "_partial", icon_description = STATE == "opening" and "Opening" or "Closing" }
     )
-    if fireEvent then
-      C4:FireEvent("Partial")
+    if shouldFireEvent then
+      fireEvent("Partial")
     end
   else
+    startStillOpenTimer()
     setButtonColor(TOGGLE_LINK_ID, buttonColors.UNKNOWN, buttonColors.UNKNOWN, true)
     setButtonColor(OPEN_LINK_ID, buttonColors.UNKNOWN, buttonColors.UNKNOWN, false)
     setButtonColor(CLOSE_LINK_ID, buttonColors.UNKNOWN, buttonColors.UNKNOWN, false)
     SendToProxy(PROXY_BINDING, "ICON_CHANGED", { icon = iconset .. "_unknown", icon_description = "Unknown" })
-    if fireEvent then
-      C4:FireEvent("Unknown")
+    if shouldFireEvent then
+      fireEvent("Unknown")
     end
   end
 end

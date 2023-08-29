@@ -1,6 +1,6 @@
 <devicedata>
   <name>myQ Device</name>
-  <version>20230823</version>
+  <version>20230829</version>
   <manufacturer>Chamberlain</manufacturer>
   <model>myQ</model>
   <creator>Black Ops Drivers</creator>
@@ -9,7 +9,7 @@
   <control>lua_gen</control>
   <driver>DriverWorks</driver>
   <created>07/30/2023 01:24 PM</created>
-  <modified>08/23/2023 11:05 PM</modified>
+  <modified>08/29/2023 11:48 AM</modified>
   <minimum_os_version>3.3.0</minimum_os_version>
   <composer_categories>
     <category>Motorization</category>
@@ -48,7 +48,12 @@
     <event>
       <id>4</id>
       <name>Unknown</name>
-      <description>When the NAME is in an Unknown State</description>
+      <description>When the NAME is in an Unknown state</description>
+    </event>
+    <event>
+      <id>5</id>
+      <name>Still Open</name>
+      <description>When the NAME remains Open for longer than the configured duration</description>
     </event>
   </events>
   <config>
@@ -123,6 +128,15 @@
         </items>
         <default>Yes</default>
         <readonly>false</readonly>
+      </property>
+      <property>
+        <name>Still Open Time (s)</name>
+        <type>RANGED_INTEGER</type>
+        <readonly>false</readonly>
+        <default>120</default>
+        <minimum>0</minimum>
+        <maximum>3600</maximum>
+        <tooltip>Amount of time (in seconds) the device must be open after which the driver will fire the 'Still Open' event. (default 120, 0 disables)</tooltip>
       </property>
       <property>
         <name>Opened LED Color</name>
