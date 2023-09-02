@@ -145,6 +145,15 @@ https://github.com/black-ops-drivers/control4-myq/issues/new
 [//]: # "### Removed"
 [//]: # "- Removed"
 
+## v20230902 - 2023-09-02
+
+### Changed
+
+- Changed polling period to be more frequent for a short time after commanding a
+  gate or garage door.
+- Changed the open/close pending icons to use the partially open gate/garage
+  door icon.
+
 ## v20230829 - 2023-08-29
 
 ### Added

@@ -14,7 +14,6 @@ JSON = require("vendor.JSON")
 
 local log = require("lib.logging")
 local bindings = require("lib.bindings")
-local persist = require("lib.persist")
 local githubUpdater = require("lib.github-updater")
 
 local api = require("api")
@@ -98,6 +97,8 @@ function OPC.Password(propertyValue)
   Connect()
 end
 
+local transitioningUntilTime = 0
+
 function Connect()
   log:trace("Connect()")
   if not gInitialized then
@@ -123,7 +124,9 @@ function Connect()
       log:info("Fetching devices from the myQ API (timer expired)")
       lastDevicesRefreshTime = now
       RefreshDevices()
-    elseif not api:hasAuthenticationFailure() and secondsSinceLastStatusesRefresh > 10 then
+    elseif
+      not api:hasAuthenticationFailure() and (now <= transitioningUntilTime or secondsSinceLastStatusesRefresh > 10)
+    then
       log:debug("Fetching device statuses from the myQ API (timer expired)")
       lastStatusesRefreshTime = now
       RefreshDeviceStatuses()
@@ -174,6 +177,7 @@ function RefreshDevices()
           if tParams.command == "open" or tParams.command == "close" then
             api:commandDevice(device, tParams.command):next(function()
               log:debug("%s command sent to device %s", tParams.command, device.displayName)
+              transitioningUntilTime = os.time() + 25
             end, function(error)
               log:error(
                 "An error occurred sending %s command to device %s; %s",

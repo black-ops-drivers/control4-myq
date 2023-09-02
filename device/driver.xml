@@ -1,6 +1,6 @@
 <devicedata>
   <name>myQ Device</name>
-  <version>20230829</version>
+  <version>20230902</version>
   <manufacturer>Chamberlain</manufacturer>
   <model>myQ</model>
   <creator>Black Ops Drivers</creator>
@@ -9,7 +9,7 @@
   <control>lua_gen</control>
   <driver>DriverWorks</driver>
   <created>07/30/2023 01:24 PM</created>
-  <modified>08/29/2023 11:48 AM</modified>
+  <modified>09/02/2023 12:24 PM</modified>
   <minimum_os_version>3.3.0</minimum_os_version>
   <composer_categories>
     <category>Motorization</category>
@@ -214,13 +214,6 @@
           <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_open/experience_512.png</Icon>
           <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_open/experience_1024.png</Icon>
         </state>
-        <state id="garage_open_pending">
-          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_open_pending/experience_70.png</Icon>
-          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_open_pending/experience_90.png</Icon>
-          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_open_pending/experience_300.png</Icon>
-          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_open_pending/experience_512.png</Icon>
-          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_open_pending/experience_1024.png</Icon>
-        </state>
         <state id="garage_closed">
           <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_closed/experience_70.png</Icon>
           <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_closed/experience_90.png</Icon>
@@ -228,12 +221,12 @@
           <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_closed/experience_512.png</Icon>
           <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_closed/experience_1024.png</Icon>
         </state>
-        <state id="garage_close_pending">
-          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_close_pending/experience_70.png</Icon>
-          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_close_pending/experience_90.png</Icon>
-          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_close_pending/experience_300.png</Icon>
-          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_close_pending/experience_512.png</Icon>
-          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_close_pending/experience_1024.png</Icon>
+        <state id="garage_pending">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_pending/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/garage_pending/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/garage_pending/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/garage_pending/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/garage_pending/experience_1024.png</Icon>
         </state>
         <state id="garage_partial">
           <Icon width="70" height="70">controller://driver/myq_device/icons/device/garage_partial/experience_70.png</Icon>
@@ -256,13 +249,6 @@
           <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_open/experience_512.png</Icon>
           <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_open/experience_1024.png</Icon>
         </state>
-        <state id="gate_open_pending">
-          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_open_pending/experience_70.png</Icon>
-          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_open_pending/experience_90.png</Icon>
-          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_open_pending/experience_300.png</Icon>
-          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_open_pending/experience_512.png</Icon>
-          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_open_pending/experience_1024.png</Icon>
-        </state>
         <state id="gate_closed">
           <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_closed/experience_70.png</Icon>
           <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_closed/experience_90.png</Icon>
@@ -270,12 +256,12 @@
           <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_closed/experience_512.png</Icon>
           <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_closed/experience_1024.png</Icon>
         </state>
-        <state id="gate_close_pending">
-          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_close_pending/experience_70.png</Icon>
-          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_close_pending/experience_90.png</Icon>
-          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_close_pending/experience_300.png</Icon>
-          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_close_pending/experience_512.png</Icon>
-          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_close_pending/experience_1024.png</Icon>
+        <state id="gate_pending">
+          <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_pending/experience_70.png</Icon>
+          <Icon width="90" height="90">controller://driver/myq_device/icons/device/gate_pending/experience_90.png</Icon>
+          <Icon width="300" height="300">controller://driver/myq_device/icons/device/gate_pending/experience_300.png</Icon>
+          <Icon width="512" height="512">controller://driver/myq_device/icons/device/gate_pending/experience_512.png</Icon>
+          <Icon width="1024" height="1024">controller://driver/myq_device/icons/device/gate_pending/experience_1024.png</Icon>
         </state>
         <state id="gate_partial">
           <Icon width="70" height="70">controller://driver/myq_device/icons/device/gate_partial/experience_70.png</Icon>
