@@ -146,9 +146,9 @@ function RFP.DO_CLICK(idBinding, strCommand, tParams, args)
   local iconType = Properties["Device Type"] == "Gate" and "gate" or "garage"
   local command, description, icon
   if (idBinding == TOGGLE_LINK_ID and STATE == "open") or (idBinding == CLOSE_LINK_ID and STATE ~= "closed") then
-    command, description, icon = "close", "Close (Pending)", iconType .. "_close_pending"
+    command, description, icon = "close", "Close (Pending)", iconType .. "_pending"
   elseif (idBinding == TOGGLE_LINK_ID and STATE == "closed") or (idBinding == OPEN_LINK_ID and STATE ~= "open") then
-    command, description, icon = "open", "Open (Pending)", iconType .. "_open_pending"
+    command, description, icon = "open", "Open (Pending)", iconType .. "_pending"
   elseif STATE == "opening" or STATE == "closing" then
     log:warn("Ignoring command; the device is not in a stationary state")
     return
