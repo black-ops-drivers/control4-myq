@@ -19,6 +19,8 @@ local OAUTH_SCOPE = "MyQ_Residential offline_access"
 local ACCOUNTS_BASE_URI = "https://accounts.myq-cloud.com"
 local DEVICES_BASE_URI = "https://devices.myq-cloud.com"
 local ACCOUNTS_DEVICES_BASE_URI = "https://account-devices-gdo.myq-cloud.com"
+local USER_AGENT =
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1"
 
 local noop = function() end
 
@@ -115,6 +117,7 @@ function API:getDevices()
             accountDeviceRequests,
             http:get(DEVICES_BASE_URI .. "/api/v5.2/Accounts/" .. accountId .. "/Devices", {
               Authorization = authorization,
+              ["User-Agent"] = USER_AGENT,
             })
           )
         end
@@ -156,6 +159,7 @@ function API:commandDevice(device, command)
       nil,
       {
         Authorization = authorization,
+        ["User-Agent"] = USER_AGENT,
       }
     )
   end)
@@ -167,6 +171,7 @@ function API:_getAccounts()
     return http
       :get(ACCOUNTS_BASE_URI .. "/api/v6.0/accounts", {
         Authorization = authorization,
+        ["User-Agent"] = USER_AGENT,
       })
       :next(function(response)
         return Select(response, "body", "accounts")
@@ -216,6 +221,7 @@ function API:_getOauthCredentials(forceNewToken)
           }),
           {
             ["Content-Type"] = "application/x-www-form-urlencoded",
+            ["User-Agent"] = USER_AGENT,
           },
           { cookies_enable = true }
         )
@@ -251,13 +257,12 @@ function API:_getOauthCredentials(forceNewToken)
         code_challenge = challenge,
         code_challenge_method = "S256",
       }),
-      nil,
+      {
+        ["User-Agent"] = USER_AGENT,
+      },
       { cookies_enable = true }
     )
     :next(function(response)
-      if IsEmpty(Select(response.headers, "Set-Cookie")) then
-        return reject("authentication failed; authorize response was missing cookie")
-      end
       local parsedBody = htmlparser.parse(response.body)
       local endpoint = Select(parsedBody:select("form[action]"), 1, "attributes", "action")
       if IsEmpty(endpoint) then
@@ -277,12 +282,15 @@ function API:_getOauthCredentials(forceNewToken)
           for _, loginResponse in pairs(loginResponses) do
             local responseCode = tointeger(Select(loginResponse, "code")) or 0
             local tHeaders = Select(loginResponse, "headers") or {}
+            TableMap(tHeaders, function(value, key)
+              tHeaders[key:lower()] = value
+            end)
             if
               responseCode == 302
-              and not IsEmpty(Select(tHeaders, "Set-Cookie"))
-              and not IsEmpty(Select(tHeaders, "Location"))
+              and not IsEmpty(Select(tHeaders, "set-cookie"))
+              and not IsEmpty(Select(tHeaders, "location"))
             then
-              d:resolve(tHeaders.Location)
+              d:resolve(tHeaders.location)
             end
           end
           log:ultra("authentication failure responses: %s", loginResponses)
@@ -297,6 +305,7 @@ function API:_getOauthCredentials(forceNewToken)
           }),
           {
             ["Content-Type"] = "application/x-www-form-urlencoded",
+            ["User-Agent"] = USER_AGENT,
           }
         )
       return d
@@ -310,15 +319,19 @@ function API:_getOauthCredentials(forceNewToken)
           responses = IsList(responses) and responses or {}
           local responseCode = tointeger(Select(responses, #responses, "code")) or 0
           local tHeaders = Select(responses, #responses, "headers") or {}
-
-          local code = (Select(tHeaders, "Location") or ""):match("code=([A-Z0-9]+)")
+          TableMap(tHeaders, function(value, key)
+            tHeaders[key:lower()] = value
+          end)
+          local code = (Select(tHeaders, "location") or ""):match("code=([A-Z0-9]+)")
           if responseCode == 302 and not IsEmpty(code) then
             d:resolve(code)
           else
             d:reject("authentication failed; failed to intercept redirect code")
           end
         end)
-        :Get(url)
+        :Get(url, {
+          ["User-Agent"] = USER_AGENT,
+        })
       return d
     end)
     :next(function(code)
@@ -336,6 +349,7 @@ function API:_getOauthCredentials(forceNewToken)
           }),
           {
             ["Content-Type"] = "application/x-www-form-urlencoded",
+            ["User-Agent"] = USER_AGENT,
           },
           { cookies_enable = true }
         )

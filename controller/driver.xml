@@ -1,6 +1,6 @@
 <devicedata>
   <name>myQ Controller</name>
-  <version>20230902</version>
+  <version>20230908</version>
   <manufacturer>Chamberlain</manufacturer>
   <model>myQ Controller</model>
   <creator>Black Ops Drivers</creator>
@@ -10,7 +10,7 @@
   <controlmethod>ip</controlmethod>
   <driver>DriverWorks</driver>
   <created>07/30/2023 01:24 PM</created>
-  <modified>09/02/2023 12:24 PM</modified>
+  <modified>09/08/2023 09:20 PM</modified>
   <combo>true</combo>
   <minimum_os_version>3.3.0</minimum_os_version>
   <composer_categories>
