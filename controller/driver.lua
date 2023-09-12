@@ -116,7 +116,7 @@ function Connect()
     local secondsSinceLastUpdate = now - lastUpdateTime
     local secondsSinceLastDevicesRefresh = now - lastDevicesRefreshTime
     local secondsSinceLastStatusesRefresh = now - lastStatusesRefreshTime
-    if Properties["Automatic Updates"] == "Yes" and secondsSinceLastUpdate > (30 * 60) then
+    if toboolean(Properties["Automatic Updates"]) and secondsSinceLastUpdate > (30 * 60) then
       log:info("Checking for driver update (timer expired)")
       lastUpdateTime = now
       UpdateDrivers()
