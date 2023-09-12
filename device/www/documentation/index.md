@@ -145,6 +145,13 @@ https://github.com/black-ops-drivers/control4-myq/issues/new
 [//]: # "### Removed"
 [//]: # "- Removed"
 
+## v20230912 - 2023-09-12
+
+### Fixed
+
+- Fixed an issue where automatic updates were never performed. **_NOTE:_** All
+  versions prior to this will need to be manually updated.
+
 ## v20230908 - 2023-09-08
 
 ### Fixed
