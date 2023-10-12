@@ -12,9 +12,9 @@ local OAUTH_PERSIST_KEY = "ApiOauth"
 local OAUTH_BASE_URI = "https://partner-identity.myq-cloud.com"
 local OAUTH_AUTHORIZE_URI = OAUTH_BASE_URI .. "/connect/authorize"
 local OAUTH_TOKEN_URI = OAUTH_BASE_URI .. "/connect/token"
-local OAUTH_CLIENT_ID = "IOS_CGI_MYQ"
+local OAUTH_CLIENT_ID = "ANDROID_CGI_MYQ"
 local OAUTH_CLIENT_SECRET = "VUQ0RFhuS3lQV3EyNUJTdw=="
-local OAUTH_REDIRECT_URI = "com.myqops://ios"
+local OAUTH_REDIRECT_URI = "com.myqops://android"
 local OAUTH_SCOPE = "MyQ_Residential offline_access"
 local ACCOUNTS_BASE_URI = "https://accounts.myq-cloud.com"
 local DEVICES_BASE_URI = "https://devices.myq-cloud.com"
@@ -302,6 +302,8 @@ function API:_getOauthCredentials(forceNewToken)
             Email = assert(email),
             Password = assert(password),
             __RequestVerificationToken = verificationToken,
+            brand = "myq",
+            UnifiedFlowRequested = "True",
           }),
           {
             ["Content-Type"] = "application/x-www-form-urlencoded",
