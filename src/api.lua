@@ -19,8 +19,30 @@ local OAUTH_SCOPE = "MyQ_Residential offline_access"
 local ACCOUNTS_BASE_URI = "https://accounts.myq-cloud.com"
 local DEVICES_BASE_URI = "https://devices.myq-cloud.com"
 local ACCOUNTS_DEVICES_BASE_URI = "https://account-devices-gdo.myq-cloud.com"
-local USER_AGENT =
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1"
+
+local MYQ_APP_USER_AGENT = "sdk_gphone_x86/Android 11"
+local MYQ_APP_VERSION = "5.242.0.72704"
+local MYQ_APP_ID = "D9D7B25035D549D8A3EA16A9FFB8C927D4A19B55B8944011B2670A8321BF8312"
+local MYQ_API_HEADERS = {
+  ["Accept-Encoding"] = "gzip",
+  ["App-Version"] = MYQ_APP_VERSION,
+  ["BrandId"] = "1",
+  ["MyQApplicationId"] = MYQ_APP_ID,
+  ["User-Agent"] = MYQ_APP_USER_AGENT,
+}
+
+local MYQ_LOGIN_USER_AGENT =
+  "Mozilla/5.0 (Linux; Android 11; sdk_gphone_x86) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Mobile Safari/537.36"
+local MYQ_LOGIN_HEADERS = {
+  ["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+  ["Accept-Encoding"] = "gzip, deflate, br",
+  ["Accept-Language"] = "en-US,en;q=0.9",
+  ["User-Agent"] = MYQ_LOGIN_USER_AGENT,
+  ["sec-fetch-dest"] = "document",
+  ["sec-fetch-mode"] = "navigate",
+  ["sec-fetch-site"] = "none",
+  ["upgrade-insecure-requests"] = "1",
+}
 
 local noop = function() end
 
@@ -115,10 +137,12 @@ function API:getDevices()
           accountsById[accountId] = account
           table.insert(
             accountDeviceRequests,
-            http:get(DEVICES_BASE_URI .. "/api/v5.2/Accounts/" .. accountId .. "/Devices", {
-              Authorization = authorization,
-              ["User-Agent"] = USER_AGENT,
-            })
+            http:get(
+              DEVICES_BASE_URI .. "/api/v5.2/Accounts/" .. accountId .. "/Devices",
+              TableShallowMerge(MYQ_API_HEADERS, {
+                Authorization = authorization,
+              })
+            )
           )
         end
       end
@@ -157,10 +181,9 @@ function API:commandDevice(device, command)
         .. "/"
         .. command,
       nil,
-      {
+      TableShallowMerge(MYQ_API_HEADERS, {
         Authorization = authorization,
-        ["User-Agent"] = USER_AGENT,
-      }
+      })
     )
   end)
 end
@@ -169,10 +192,12 @@ function API:_getAccounts()
   log:trace("API:_getAccounts()")
   return self:_getAuthorizationHeader():next(function(authorization)
     return http
-      :get(ACCOUNTS_BASE_URI .. "/api/v6.0/accounts", {
-        Authorization = authorization,
-        ["User-Agent"] = USER_AGENT,
-      })
+      :get(
+        ACCOUNTS_BASE_URI .. "/api/v6.0/accounts",
+        TableShallowMerge(MYQ_API_HEADERS, {
+          Authorization = authorization,
+        })
+      )
       :next(function(response)
         return Select(response, "body", "accounts")
       end)
@@ -219,10 +244,11 @@ function API:_getOauthCredentials(forceNewToken)
             redirect_uri = OAUTH_REDIRECT_URI,
             scope = OAUTH_SCOPE,
           }),
-          {
+          TableShallowMerge(MYQ_API_HEADERS, {
+            ["Authorization"] = "Bearer old-token",
             ["Content-Type"] = "application/x-www-form-urlencoded",
-            ["User-Agent"] = USER_AGENT,
-          },
+            ["isRefresh"] = "true",
+          }),
           { cookies_enable = true }
         )
         :next(function(response)
@@ -250,16 +276,17 @@ function API:_getOauthCredentials(forceNewToken)
   return http
     :get(
       MakeURL(OAUTH_AUTHORIZE_URI, {
+        acr_values = "unified_flow:v1  brand:myq",
         client_id = OAUTH_CLIENT_ID,
-        response_type = "code",
-        redirect_uri = OAUTH_REDIRECT_URI,
-        scope = OAUTH_SCOPE,
         code_challenge = challenge,
         code_challenge_method = "S256",
+        prompt = "login",
+        ui_locales = "en-US",
+        redirect_uri = OAUTH_REDIRECT_URI,
+        response_type = "code",
+        scope = OAUTH_SCOPE,
       }),
-      {
-        ["User-Agent"] = USER_AGENT,
-      },
+      MYQ_LOGIN_HEADERS,
       { cookies_enable = true }
     )
     :next(function(response)
@@ -301,14 +328,17 @@ function API:_getOauthCredentials(forceNewToken)
           MakeURL(nil, {
             Email = assert(email),
             Password = assert(password),
+            UnifiedFlowRequested = "True",
             __RequestVerificationToken = verificationToken,
             brand = "myq",
-            UnifiedFlowRequested = "True",
           }),
-          {
+          TableShallowMerge(MYQ_LOGIN_HEADERS, {
             ["Content-Type"] = "application/x-www-form-urlencoded",
-            ["User-Agent"] = USER_AGENT,
-          }
+            ["cache-control"] = "max-age=0",
+            ["origin"] = "null",
+            ["sec-fetch-site"] = "same-origin",
+            ["sec-fetch-user"] = "?1",
+          })
         )
       return d
     end)
@@ -331,9 +361,7 @@ function API:_getOauthCredentials(forceNewToken)
             d:reject("authentication failed; failed to intercept redirect code")
           end
         end)
-        :Get(url, {
-          ["User-Agent"] = USER_AGENT,
-        })
+        :Get(url, MYQ_API_HEADERS)
       return d
     end)
     :next(function(code)
@@ -342,17 +370,15 @@ function API:_getOauthCredentials(forceNewToken)
           OAUTH_TOKEN_URI,
           MakeURL(nil, {
             client_id = OAUTH_CLIENT_ID,
-            client_secret = OAUTH_CLIENT_SECRET,
             code = code,
             code_verifier = verifier,
             grant_type = "authorization_code",
             redirect_uri = OAUTH_REDIRECT_URI,
             scope = OAUTH_SCOPE,
           }),
-          {
+          TableShallowMerge(MYQ_API_HEADERS, {
             ["Content-Type"] = "application/x-www-form-urlencoded",
-            ["User-Agent"] = USER_AGENT,
-          },
+          }),
           { cookies_enable = true }
         )
         :next(function(response)

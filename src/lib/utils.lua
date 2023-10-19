@@ -172,6 +172,18 @@ function TableReverse(t)
   return r
 end
 
+function TableShallowMerge(...)
+  local m = {}
+  for _, t in pairs({ ... }) do
+    if type(t or false) == "table" then
+      for k, v in pairs(t or {}) do
+        m[k] = v
+      end
+    end
+  end
+  return m
+end
+
 function TableDeepCopy(t, seen)
   seen = seen or {}
   if t == nil then
@@ -212,16 +224,13 @@ function UniqueList(t)
   return list
 end
 
-function ConcatList(t1, t2)
+function ConcatLists(...)
   local c = {}
-  if type(t1) == "table" then
-    for _, v in ipairs(t1) do
-      table.insert(c, v)
-    end
-  end
-  if type(t2) == "table" then
-    for _, v in ipairs(t2) do
-      table.insert(c, v)
+  for _, t in pairs({ ... }) do
+    if type(t) == "table" then
+      for _, v in ipairs(t) do
+        table.insert(c, v)
+      end
     end
   end
   return c
