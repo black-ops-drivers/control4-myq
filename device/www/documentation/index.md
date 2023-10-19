@@ -145,6 +145,12 @@ https://github.com/black-ops-drivers/control4-myq/issues/new
 [//]: # "### Removed"
 [//]: # "- Removed"
 
+## v20231019 - 2023-10-19
+
+### Fixed
+
+- Fixed more authentication issues would fail due to myQ API changes.
+
 ## v20231012 - 2023-10-12
 
 ### Fixed
