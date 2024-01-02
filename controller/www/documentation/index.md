@@ -1,3 +1,5 @@
+## This driver is no longer functional as Chamberlain has taken a hostile postition against 3rd party integrations and block API access. [This post](https://community.home-assistant.io/t/removal-of-myq-integration/637342/1) from the Home Assistant community provides more details and alternatives.
+
 ![myQ](images/header.png)
 
 ---
