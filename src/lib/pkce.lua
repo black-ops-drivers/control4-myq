@@ -34,11 +34,10 @@ end
 ---
 function PKCE:challenge(length)
   log:trace("PKCE:challenge(%s)", length)
-  length = tointeger(length)
+  length = InRange(tointeger(length), 43, 128)
   if length == nil then
     length = 43
   end
-  length = InRange(length, 43, 128)
 
   local verifier = self:_generateVerifier(length)
   local challenge = self:_generateChallenge(verifier)

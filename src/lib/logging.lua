@@ -14,13 +14,9 @@ function Log:new()
 end
 
 function Log:setLogName(logName)
-  if logName == nil or logName == "" then
-    logName = ""
-  else
-    logName = logName .. ": "
+  if type(logName) == "string" then
+    self._logName = logName
   end
-
-  self._logName = logName
 end
 
 function Log:getLogName()
@@ -28,7 +24,13 @@ function Log:getLogName()
 end
 
 function Log:setLogLevel(level)
-  self._logLevel = tonumber(string.sub(level or "", 1, 1)) or self._logLevel
+  if type(level) == "string" then
+    -- Assume the level is the first char
+    level = tonumber(level:sub(1, 1))
+  end
+  if type(level) == "number" then
+    self._logLevel = InRange(level, -1, 6)
+  end
 end
 
 function Log:getLogLevel()
@@ -36,7 +38,7 @@ function Log:getLogLevel()
 end
 
 function Log:setLogMode(logMode)
-  logMode = logMode or ""
+  logMode = type(logMode) == "string" and logMode or ""
   self:setOutputPrintEnabled(logMode:find("Print") ~= nil)
   self:setOutputC4LogEnabled(logMode:find("Log") ~= nil)
 end

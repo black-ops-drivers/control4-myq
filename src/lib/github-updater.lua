@@ -22,22 +22,20 @@ function GitHubUpdater:getLatestRelease(repo, includePrereleases)
   if IsEmpty(repo) then
     return reject("repo name is required")
   end
-  return http
-    :get("https://api.github.com/repos/" .. assert(repo) .. "/releases", DEFAULT_HEADERS)
-    :next(function(response)
-      for _, release in pairs(response.body) do
-        local releaseVersion, err = version(release.tag_name)
-        if IsEmpty(err) then
-          if not release.draft and (toboolean(includePrereleases) or not release.prerelease) then
-            release.version = releaseVersion
-            return release
-          end
-        else
-          log:warn("repo %s release '%s' has an invalid tag version '%s'", repo, release.name, release.tag_name)
+  return http:get("https://api.github.com/repos/" .. repo .. "/releases", DEFAULT_HEADERS):next(function(response)
+    for _, release in pairs(response.body) do
+      local releaseVersion, err = version(release.tag_name)
+      if IsEmpty(err) then
+        if not release.draft and (toboolean(includePrereleases) or not release.prerelease) then
+          release.version = releaseVersion
+          return release
         end
+      else
+        log:warn("repo %s release '%s' has an invalid tag version '%s'", repo, release.name, release.tag_name)
       end
-      return reject(string.format("repo %s does not have any valid releases", repo))
-    end)
+    end
+    return reject(string.format("repo %s does not have any valid releases", repo))
+  end)
 end
 
 function GitHubUpdater:getOutdatedDriverAssets(repo, driverFilenames, includePrereleases, forceUpdate)
@@ -138,7 +136,7 @@ function GitHubUpdater:updateAll(repo, driverFilenames, includePrereleases, forc
         return d:resolve({})
       end
 
-      C4:CreateTCPClient()
+      C4:CreateTCPClient(true)
         :OnConnect(function(client)
           for _, driverFilename in pairs(downloadedDriverFilenames) do
             local c4soap = XMLTag(

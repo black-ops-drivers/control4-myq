@@ -7,7 +7,6 @@ local DEFAULT_TIMEOUT = 10 * 1000
 local Http = {}
 
 function Http:new()
-  log:trace("Http:new()")
   local properties = {
     _defaultTimeout = DEFAULT_TIMEOUT,
   }
@@ -18,7 +17,11 @@ end
 
 function Http:setDefaultTimeout(timeout)
   log:trace("Http:setDefaultTimeout(%s)", timeout)
-  self._defaultTimeout = tointeger(timeout)
+  timeout = tointeger(timeout)
+  if type(timeout) ~= "number" then
+    timeout = DEFAULT_TIMEOUT
+  end
+  self._defaultTimeout = timeout
 end
 
 function Http:getDefaultTimeout()
@@ -39,6 +42,8 @@ function Http:request(method, url, data, headers, options)
   options = options or {}
   local returnRedirect = toboolean(options.return_redirect)
   options.return_redirect = nil
+  local returnHttpFailure = toboolean(options.return_http_failure)
+  options.return_http_failure = nil
   if IsEmpty(options) then
     options = nil
   end
@@ -46,10 +51,13 @@ function Http:request(method, url, data, headers, options)
     if timeoutTimer ~= nil then
       timeoutTimer:Cancel()
     end
-    if
-      (not returnRedirect or responseCode ~= 302)
-      and (strError or IsEmpty(responseCode) or responseCode < 200 or responseCode >= 300)
-    then
+
+    local isRedirect = not returnRedirect and responseCode == 302
+    local isHttpFailure = not returnHttpFailure
+      and type(responseCode) == "number"
+      and (responseCode < 200 or responseCode >= 300)
+
+    if strError or isRedirect or isHttpFailure then
       d:reject(
         string.format(
           "HTTP %s request to %s failed%s%s",

@@ -317,10 +317,11 @@ function API:_getOauthCredentials(forceNewToken)
               and not IsEmpty(Select(tHeaders, "set-cookie"))
               and not IsEmpty(Select(tHeaders, "location"))
             then
+              log:trace("authentication success responses: %s", loginResponses)
               d:resolve(tHeaders.location)
             end
           end
-          log:ultra("authentication failure responses: %s", loginResponses)
+          log:trace("authentication failure responses: %s", loginResponses)
           d:reject("authentication failed; incorrect email and password")
         end)
         :Post(

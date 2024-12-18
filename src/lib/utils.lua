@@ -303,7 +303,7 @@ function delay(ms)
     return d:resolve()
   end
 
-  SetTimer(tostring(os.time()), ms, function()
+  SetTimer(C4:UUID("Random"), ms, function()
     d:resolve()
   end)
   return d

@@ -66,7 +66,7 @@ function Bindings:deleteBinding(namespace, key)
   log:trace("Binding:deleteBinding(%s, %s)", namespace, key)
   local bindings = self:_getBindings()
   local bindingId = Select(bindings, namespace, key, "bindingId")
-  if IsEmpty(bindingId) then
+  if type(bindingId) ~= "number" then
     return
   end
 
